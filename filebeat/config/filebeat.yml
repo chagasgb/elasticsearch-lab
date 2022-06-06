@@ -1,0 +1,66 @@
+filebeat.autodiscover:
+  providers:
+  
+# - Server01 - #
+    - type: docker
+      templates:
+        - condition:
+            contains:
+              docker.container.name: server01
+          config:
+            - type: container
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+              processors:
+                - add_fields:
+                    fields:
+                      ingest_pipeline_name: server01
+                      type_of_log: access
+  
+# - Server02 - #
+    - type: docker
+      templates:
+        - condition:
+            contains:
+              docker.container.name: server02
+          config:
+            - type: container
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+              processors:
+                - add_fields:
+                    fields:
+                      ingest_pipeline_name: server02
+                      type_of_log: error
+
+# - Server03 - #
+    - type: docker
+      templates:
+        - condition:
+            contains:
+              docker.container.name: server03
+          config:
+            - type: container
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+              processors:
+                - add_fields:
+                    fields:
+                      ingest_pipeline_name: server03
+                      type_of_log: slowquery
+
+setup.template.name: "vista_template"
+setup.template.pattern: "vista_template"
+
+output.elasticsearch:
+  hosts: ['http://192.168.100.64:9200']
+  username: elastic
+  password: changeme
+  index: "%{[fields.ingest_pipeline_name]}-%{[fields.type_of_log]}"
+  #pipeline: "%{[pipeline]}"
+  pipeline: "server"
+
+
+
+http.enabled: true
+http.host: 0.0.0.0

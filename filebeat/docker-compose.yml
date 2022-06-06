@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.1.0
+    container_name: filebeat
+    user: root
+    command:
+      - -e
+      - --strict.perms=false
+
+    volumes:
+      - type: bind
+        source: ./config/filebeat.yml
+        target: /usr/share/filebeat/filebeat.yml
+
+      # - Fluentd logs bind - #
+
+      #- type: bind
+      #  source: /logs-fluentd/
+      #  target: /usr/share/filebeat/logs/
+
+      - type: bind
+        source: /var/lib/docker/containers
+        target: /var/lib/docker/containers
+        read_only: true
+
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+
+    environment:
+      ELASTIC_PASSWORD: changeme
+
+

@@ -1,0 +1,54 @@
+PUT _ingest/pipeline/server
+{
+  "processors": [
+    {
+      "grok": {
+        "field": "message",
+        "patterns": [
+          "%{HTTPDATE:time} %{WORD:severety} - %{WORD:server} - %{IPORHOST:client_ip} - %{GREEDYDATA:content_log}"
+        ]
+      }
+    },
+    {
+      "date": {
+        "field": "time",
+        "formats": [
+          "dd/MMM/yyyy:HH:mm:ss Z"
+        ]
+      }
+    },
+    {
+      "remove": {
+        "field": [
+          "agent.ephemeral_id",
+          "agent.id",
+          "agent.name",
+          "agent.type",
+          "agent.version",
+          "container.id",
+          "container.image.name",
+          "container.name",
+          "docker.container.labels.com_docker_compose_config-hash",
+          "docker.container.labels.com_docker_compose_container-number",
+          "docker.container.labels.com_docker_compose_oneoff",
+          "docker.container.labels.com_docker_compose_project",
+          "docker.container.labels.com_docker_compose_project_config_files",
+          "docker.container.labels.com_docker_compose_project_working_dir",
+          "docker.container.labels.com_docker_compose_service",
+          "docker.container.labels.com_docker_compose_version",
+          "ecs.version",
+          "fields.ingest_pipeline_name",
+          "fields.type_of_log",
+          "host.name",
+          "input.type",
+          "log.file.path",
+          "message",
+          "stream",
+          "log.offset",
+          "_score"
+        ],
+        "ignore_missing": true
+      }
+    }
+  ]
+}

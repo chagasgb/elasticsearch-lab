@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+
+  server01:
+    container_name: server01
+    build:
+      context: server01/
+
+  server02:
+    container_name: server02
+    build:
+      context: server02/
+
+
+  server03:
+    container_name: server03
+    build:
+      context: server03/
